@@ -1,4 +1,3 @@
-
 const loginText = document.querySelector(".title-text .login");
 const loginForm = document.querySelector("form.login");
 const loginBtn = document.querySelector("label.login");
@@ -40,7 +39,7 @@ document.querySelector("form.signup").addEventListener("submit", function (e) {
 
   users[email] = password;
   localStorage.setItem("users", JSON.stringify(users));
-  window.location.href = "home.html";
+    window.location.href = "/templates/home.html";
 });
 
 // Handle Login
@@ -52,7 +51,7 @@ document.querySelector("form.login").addEventListener("submit", function (e) {
   const users = JSON.parse(localStorage.getItem("users") || "{}");
 
   if (users[email] && users[email] === password) {
-    window.location.href = "home.html";
+    window.location.href = "/templates/home.html";
   } else {
     alert("Invalid email or password.");
   }
