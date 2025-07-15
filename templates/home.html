@@ -25,22 +25,49 @@
         </div>
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
+        <a href="settings.html">Settings</a>
         <a href="form.html" id="logout-btn">Logout</a>
       </nav>
     </header>
 
     <section class="hero">
-      <h2 class="typing-container"><span class="typing-text done">Your Future, One Step Ahead</span></h2>
+      <h2 class="typing-container">
+        <span id="username-display"></span>
+        <span class="typing-text done">Your Future, One Step Ahead</span>
+      </h2>
       <p>NextStep helps you plan, track, and achieve your goals with clarity and confidence. Designed for dreamers,
         doers, and everyone in between.</p>
-      <button>Get Started</button>
-    </section>
-  </main>
+      
+      <!-- Checkbox hack for modal -->
+      <input type="checkbox" id="quiz-modal-toggle" style="display:none;">
+      <label for="quiz-modal-toggle" class="quiz-btn">Get Started with NextStep's Career Quiz</label>
 
-  <footer>
-    &copy; 2025 NextStep. All rights reserved.
-  </footer>
-  <script src="/static/js/style.js"></script>
+      <div id="career-quiz-modal" class="modal">
+        <div class="modal-content">
+          <label for="quiz-modal-toggle" class="close-btn">&times;</label>
+          <form method="POST" action="/career-quiz">
+            <h3>What type of career are you interested in?</h3>
+            <select name="career_type" required>
+              <option value="" disabled selected>Select one</option>
+              <option value="Medical">Medical</option>
+              <option value="Tech">Tech</option>
+              <option value="Business">Business</option>
+              <option value="Education">Education</option>
+              <option value="Arts">Arts</option>
+              <option value="Other">Other</option>
+            </select>
+            <br><br>
+            <button type="submit" class="quiz-btn">Next</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <p>&copy; 2025 NextStep. All rights reserved.</p>
+    </div>
+    <script src="/static/js/style.js"></script>
+  </main>
 </body>
 
 </html>
