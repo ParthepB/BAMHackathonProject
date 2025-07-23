@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Features - NextStep</title>
+  <link rel="stylesheet" href="/static/css/features.css">
+</head>
+
+<body>
+
+  <main>
+    <header>
+      <h1>NextStep</h1>
+      <nav>
+        <a href="{{ url_for('home') }}">Home</a>
+        <div class="dropdown">
+          <a href="{{ url_for('features') }}" class="dropbtn">Features</a>
+          <div class="dropdown-content">
+            <a href="{{ url_for('rmaker') }}">Resume Maker</a>
+            <a href="{{ url_for('rgrader') }}">Resume Grader</a>
+            <a href="{{ url_for('mock') }}">Mock Interview Bot</a>
+          </div>
+        </div>
+        <a href="{{ url_for('about') }}">About</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
+        <a href="{{ url_for('settings') }}">Settings</a>
+        <a href="{{ url_for('logout') }}" id="logout-btn">Logout</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <h2>Powerful Features</h2>
+      <p>Discover the tools that will accelerate your career journey and help you achieve your professional goals.</p>
+    </section>
+
+    <section class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📝</div>
+        <h3>Resume Maker</h3>
+        <p>Create professional, ATS-friendly resumes with our intelligent resume builder. Choose from modern templates and get real-time suggestions.</p>
+        <a href="{{ url_for('rmaker') }}" class="feature-btn">Get Started</a>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Resume Grader</h3>
+        <p>Get instant feedback on your resume with our AI-powered grading system. Identify areas for improvement and optimize for success.</p>
+        <a href="{{ url_for('rgrader') }}" class="feature-btn">Grade Resume</a>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3>Mock Interview Bot</h3>
+        <p>Practice with our AI interview coach. Get personalized questions, real-time feedback, and build confidence for your next interview.</p>
+        <a href="{{ url_for('mock') }}" class="feature-btn">Start Practice</a>
+      </div>
+    </section>
+
+    <section class="additional-features">
+      <h2>Coming Soon</h2>
+      <div class="coming-soon-grid">
+        <div class="coming-soon-card">
+          <div class="feature-icon">🎯</div>
+          <h4>Career Path Planner</h4>
+          <p>Map your career journey with personalized roadmaps and milestone tracking.</p>
+        </div>
+        <div class="coming-soon-card">
+          <div class="feature-icon">📈</div>
+          <h4>Skill Assessment</h4>
+          <p>Evaluate your skills and get recommendations for improvement and growth.</p>
+        </div>
+        <div class="coming-soon-card">
+          <div class="feature-icon">🔗</div>
+          <h4>Network Builder</h4>
+          <p>Connect with industry professionals and expand your professional network.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <p>&copy; 2025 NextStep. All rights reserved.</p>
+    </div>
+    <script src="/static/js/style.js"></script>
+  </main>
+</body>
+
+</html>

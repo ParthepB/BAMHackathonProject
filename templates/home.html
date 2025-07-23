@@ -14,19 +14,19 @@
     <header>
       <h1>NextStep</h1>
       <nav>
-        <a href="home.html">Home</a>
+        <a href="{{ url_for('home') }}">Home</a>
         <div class="dropdown">
-          <a href="features.html" class="dropbtn">Features</a>
+          <a href="{{ url_for('features') }}" class="dropbtn">Features</a>
           <div class="dropdown-content">
-            <a href="rmaker.html">Resume Maker</a>
-            <a href="rgrader.html">Resume Grader</a>
-            <a href="mock.html">Mock Interview Bot</a>
+            <a href="{{ url_for('rmaker') }}">Resume Maker</a>
+            <a href="{{ url_for('rgrader') }}">Resume Grader</a>
+            <a href="{{ url_for('mock') }}">Mock Interview Bot</a>
           </div>
         </div>
-        <a href="about.html">About</a>
-        <a href="contact.html">Contact</a>
-        <a href="settings.html">Settings</a>
-        <a href="form.html" id="logout-btn">Logout</a>
+        <a href="{{ url_for('about') }}">About</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
+        <a href="{{ url_for('settings') }}">Settings</a>
+        <a href="{{ url_for('logout') }}" id="logout-btn">Logout</a>
       </nav>
     </header>
 

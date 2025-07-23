@@ -50,7 +50,7 @@ document.querySelector("form.signup").addEventListener("submit", function (e) {
   users[username] = { username, email, password };
   localStorage.setItem("users", JSON.stringify(users));
   localStorage.setItem("currentUser", username);
-  window.location.href = "/templates/home.html";
+  window.location.href = "/home";
 });
 
 // Handle Login
@@ -74,7 +74,7 @@ document.querySelector("form.login").addEventListener("submit", function (e) {
 
   if (matchedUser) {
     localStorage.setItem("currentUser", matchedUser.username);
-    window.location.href = "/templates/home.html";
+    window.location.href = "/home";
   } else {
     alert("Invalid email/username or password.");
   }

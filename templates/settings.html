@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings - NextStep</title>
+  <link rel="stylesheet" href="/static/css/settings.css">
+</head>
+
+<body>
+
+  <main>
+    <header>
+      <h1>NextStep</h1>
+      <nav>
+        <a href="{{ url_for('home') }}">Home</a>
+        <div class="dropdown">
+          <a href="{{ url_for('features') }}" class="dropbtn">Features</a>
+          <div class="dropdown-content">
+            <a href="{{ url_for('rmaker') }}">Resume Maker</a>
+            <a href="{{ url_for('rgrader') }}">Resume Grader</a>
+            <a href="{{ url_for('mock') }}">Mock Interview Bot</a>
+          </div>
+        </div>
+        <a href="{{ url_for('about') }}">About</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
+        <a href="{{ url_for('settings') }}">Settings</a>
+        <a href="{{ url_for('logout') }}" id="logout-btn">Logout</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <h2>Account Settings</h2>
+      <p>Manage your profile and preferences</p>
+    </section>
+
+    <section class="settings-content">
+      <div class="settings-sidebar">
+        <div class="settings-nav">
+          <button class="settings-nav-btn active" onclick="showSection('profile')">
+            <span class="nav-icon">👤</span>
+            Profile
+          </button>
+          <button class="settings-nav-btn" onclick="showSection('notifications')">
+            <span class="nav-icon">🔔</span>
+            Notifications
+          </button>
+          <button class="settings-nav-btn" onclick="showSection('privacy')">
+            <span class="nav-icon">🔒</span>
+            Privacy
+          </button>
+          <button class="settings-nav-btn" onclick="showSection('account')">
+            <span class="nav-icon">⚙️</span>
+            Account
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-main">
+        <!-- Profile Section -->
+        <div id="profile-section" class="settings-section active">
+          <h3>Profile Information</h3>
+          <form class="settings-form" onsubmit="handleProfileUpdate(event)">
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input type="text" id="username" name="username" placeholder="Enter your username">
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input type="email" id="email" name="email" placeholder="Enter your email">
+            </div>
+
+            <div class="form-group">
+              <label for="fullname">Full Name</label>
+              <input type="text" id="fullname" name="fullname" placeholder="Enter your full name">
+            </div>
+
+            <div class="form-group">
+              <label for="bio">Bio</label>
+              <textarea id="bio" name="bio" rows="4" placeholder="Tell us about yourself..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="location">Location</label>
+              <input type="text" id="location" name="location" placeholder="City, Country">
+            </div>
+
+            <button type="submit" class="save-btn">Save Changes</button>
+          </form>
+        </div>
+
+        <!-- Notifications Section -->
+        <div id="notifications-section" class="settings-section">
+          <h3>Notification Preferences</h3>
+          <div class="notification-options">
+            <div class="notification-item">
+              <div class="notification-info">
+                <h4>Email Notifications</h4>
+                <p>Receive updates about your career progress via email</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="notification-item">
+              <div class="notification-info">
+                <h4>Interview Reminders</h4>
+                <p>Get notified about upcoming mock interviews</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="notification-item">
+              <div class="notification-info">
+                <h4>Weekly Progress Reports</h4>
+                <p>Receive weekly summaries of your activities</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="notification-item">
+              <div class="notification-info">
+                <h4>Feature Updates</h4>
+                <p>Stay informed about new features and improvements</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Privacy Section -->
+        <div id="privacy-section" class="settings-section">
+          <h3>Privacy Settings</h3>
+          <div class="privacy-options">
+            <div class="privacy-item">
+              <div class="privacy-info">
+                <h4>Profile Visibility</h4>
+                <p>Control who can see your profile information</p>
+              </div>
+              <select class="privacy-select">
+                <option value="public">Public</option>
+                <option value="private" selected>Private</option>
+                <option value="connections">Connections Only</option>
+              </select>
+            </div>
+
+            <div class="privacy-item">
+              <div class="privacy-info">
+                <h4>Data Collection</h4>
+                <p>Allow us to collect anonymous usage data to improve our services</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="privacy-item">
+              <div class="privacy-info">
+                <h4>Analytics</h4>
+                <p>Help us understand how you use NextStep</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Account Section -->
+        <div id="account-section" class="settings-section">
+          <h3>Account Management</h3>
+          <div class="account-options">
+            <div class="account-item">
+              <h4>Change Password</h4>
+              <p>Update your account password for security</p>
+              <button class="secondary-btn" onclick="showChangePassword()">Change Password</button>
+            </div>
+
+            <div class="account-item">
+              <h4>Download Data</h4>
+              <p>Download a copy of your personal data</p>
+              <button class="secondary-btn" onclick="downloadData()">Download Data</button>
+            </div>
+
+            <div class="account-item danger">
+              <h4>Delete Account</h4>
+              <p>Permanently delete your account and all associated data</p>
+              <button class="danger-btn" onclick="confirmDeleteAccount()">Delete Account</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <p>&copy; 2025 NextStep. All rights reserved.</p>
+    </div>
+    <script src="/static/js/style.js"></script>
+    <script>
+      function showSection(sectionName) {
+        // Hide all sections
+        const sections = document.querySelectorAll('.settings-section');
+        sections.forEach(section => section.classList.remove('active'));
+        
+        // Remove active class from all nav buttons
+        const navButtons = document.querySelectorAll('.settings-nav-btn');
+        navButtons.forEach(btn => btn.classList.remove('active'));
+        
+        // Show selected section
+        document.getElementById(sectionName + '-section').classList.add('active');
+        
+        // Add active class to clicked button
+        event.target.classList.add('active');
+      }
+      
+      function handleProfileUpdate(event) {
+        event.preventDefault();
+        alert('Profile updated successfully!');
+      }
+      
+      function showChangePassword() {
+        alert('Change password functionality coming soon!');
+      }
+      
+      function downloadData() {
+        alert('Data download will be available soon!');
+      }
+      
+      function confirmDeleteAccount() {
+        if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+          alert('Account deletion functionality coming soon!');
+        }
+      }
+      
+      // Load user data from localStorage
+      document.addEventListener('DOMContentLoaded', function() {
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+          document.getElementById('username').value = currentUser;
+        }
+      });
+    </script>
+  </main>
+</body>
+
+</html>

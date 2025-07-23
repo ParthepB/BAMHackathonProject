@@ -1,24 +1,113 @@
 <!DOCTYPE html>
-<html lang="en">    
+<html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us - NextStep</title>
+  <link rel="stylesheet" href="/static/css/about.css">
 </head>
 
 <body>
 
-<h1>About Us</h1>
+  <main>
+    <header>
+      <h1>NextStep</h1>
+      <nav>
+        <a href="{{ url_for('home') }}">Home</a>
+        <div class="dropdown">
+          <a href="{{ url_for('features') }}" class="dropbtn">Features</a>
+          <div class="dropdown-content">
+            <a href="{{ url_for('rmaker') }}">Resume Maker</a>
+            <a href="{{ url_for('rgrader') }}">Resume Grader</a>
+            <a href="{{ url_for('mock') }}">Mock Interview Bot</a>
+          </div>
+        </div>
+        <a href="{{ url_for('about') }}">About</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
+        <a href="{{ url_for('settings') }}">Settings</a>
+        <a href="{{ url_for('logout') }}" id="logout-btn">Logout</a>
+      </nav>
+    </header>
 
-<p>
- We are the Catalyst Core, a team of passionate innovators ready to help you transform your ideas into reality. 
- Our mission is to provide you with the tools and support you need to succeed in the career realm. 
- Whether you're a recent college graduate looking for guidance or a professional seeking to take your career to the next level, we are here to help.
-</p>
+    <section class="hero">
+      <h2>About NextStep</h2>
+      <p>Empowering careers, one step at a time</p>
+    </section>
 
+    <section class="about-content">
+      <div class="about-section">
+        <div class="about-text">
+          <h3>Our Mission</h3>
+          <p>
+            We are the Catalyst Core, a team of passionate innovators ready to help you transform your ideas into reality. 
+            Our mission is to provide you with the tools and support you need to succeed in the career realm. 
+            Whether you're a recent college graduate looking for guidance or a professional seeking to take your career to the next level, we are here to help.
+          </p>
+        </div>
+        <div class="about-image">
+          <div class="placeholder-icon">🚀</div>
+        </div>
+      </div>
+
+      <div class="about-section reverse">
+        <div class="about-image">
+          <div class="placeholder-icon">💡</div>
+        </div>
+        <div class="about-text">
+          <h3>Our Vision</h3>
+          <p>
+            We envision a world where every individual has access to the tools and guidance they need to achieve their career aspirations. 
+            NextStep aims to democratize career development by providing cutting-edge technology and personalized support to help you navigate your professional journey with confidence.
+          </p>
+        </div>
+      </div>
+
+      <div class="about-section">
+        <div class="about-text">
+          <h3>What We Offer</h3>
+          <p>
+            Our platform combines artificial intelligence with human expertise to deliver personalized career solutions. 
+            From resume optimization to interview preparation, we provide comprehensive tools that adapt to your unique career goals and industry requirements.
+          </p>
+        </div>
+        <div class="about-image">
+          <div class="placeholder-icon">🎯</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="team-section">
+      <h2>Meet the Catalyst Core</h2>
+      <div class="team-grid">
+        <div class="team-member">
+          <div class="member-avatar">👨‍💻</div>
+          <h4>Development Team</h4>
+          <p>Innovative minds building the future of career development</p>
+        </div>
+        <div class="team-member">
+          <div class="member-avatar">👩‍🎨</div>
+          <h4>Design Team</h4>
+          <p>Creating intuitive and beautiful user experiences</p>
+        </div>
+        <div class="team-member">
+          <div class="member-avatar">👨‍💼</div>
+          <h4>Career Experts</h4>
+          <p>Industry professionals providing valuable insights and guidance</p>
+        </div>
+        <div class="team-member">
+          <div class="member-avatar">🤖</div>
+          <h4>AI Specialists</h4>
+          <p>Developing intelligent systems to power your career growth</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <p>&copy; 2025 NextStep. All rights reserved.</p>
+    </div>
+    <script src="/static/js/style.js"></script>
+  </main>
 </body>
-    
 
 </html>
