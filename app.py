@@ -1,4 +1,7 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request, jsonify
+from quiz import process_career_quiz
+from rmaker import generate_full_resume
+import json
 
 app = Flask(__name__)
 
@@ -51,6 +54,54 @@ def rgrader():
 def mock():
     """Display mock interview bot page"""
     return render_template('mock.html')
+
+@app.route('/career-quiz', methods=['GET', 'POST'])
+def career_quiz():
+    """Display career quiz page"""
+    return render_template('career-quiz.html')
+
+@app.route('/submit-quiz', methods=['POST'])
+def submit_quiz():
+    """Handle career quiz submission and return recommendations"""
+    try:
+        data = request.get_json()
+        career_type = data.get('career_type')
+        answers = data.get('answers', {})
+        
+        # Process the quiz using our backend logic
+        recommendations = process_career_quiz(career_type, answers)
+        
+        return jsonify(recommendations)
+    
+    except Exception as e:
+        # Return error response
+        return jsonify({
+            'error': 'Failed to process quiz',
+            'message': str(e)
+        }), 500
+
+@app.route('/api/generate-resume', methods=['POST'])
+def generate_resume_api():
+    """Generate resume using AI"""
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        if not data.get('name') or not data.get('target_role'):
+            return jsonify({
+                'success': False,
+                'error': 'Name and target role are required'
+            }), 400
+        
+        # Generate resume using AI
+        result = generate_full_resume(data)
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': f'Failed to generate resume: {str(e)}'
+        }), 500
 
 @app.route('/quiz-result')
 def quiz_result():

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Maker - NextStep</title>
+    <link rel="stylesheet" href="/static/css/home.css">
+    <link rel="stylesheet" href="/static/css/rmaker.css">
+</head>
+<body>
+    <main>
+        <header>
+            <div class="logo-section">
+                <img src="/static/images/NextStep.png" alt="NextStep Logo" class="logo">
+                <h1>NextStep</h1>
+            </div>
+            <nav>
+                <a href="{{ url_for('home') }}">Home</a>
+                <div class="dropdown">
+                    <a href="{{ url_for('features') }}" class="dropbtn">Features</a>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('career_quiz') }}">Career Quiz</a>
+                        <a href="{{ url_for('rmaker') }}">Resume Maker</a>
+                        <a href="{{ url_for('rgrader') }}">Resume Grader</a>
+                        <a href="{{ url_for('mock') }}">Mock Interview Bot</a>
+                    </div>
+                </div>
+                <a href="{{ url_for('about') }}">About</a>
+                <a href="{{ url_for('contact') }}">Contact</a>
+                <a href="{{ url_for('settings') }}">Settings</a>
+                <a href="{{ url_for('logout') }}" id="logout-btn">Logout</a>
+            </nav>
+        </header>
+
+    <div class="resume-container">
+        <!-- Form Section -->
+        <div class="form-section">
+            <div class="section-header">🤖 AI Resume Builder</div>
+            
+            <form id="resumeForm">
+                <!-- Personal Information -->
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" name="phone">
+                </div>
+                
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" name="address">
+                </div>
+                
+                <div class="form-group">
+                    <label for="linkedin">LinkedIn Profile</label>
+                    <input type="url" id="linkedin" name="linkedin">
+                </div>
+                
+                <!-- Career Information -->
+                <div class="form-group">
+                    <label for="target_role">Target Job Role</label>
+                    <input type="text" id="target_role" name="target_role" placeholder="e.g., Software Engineer, Marketing Manager" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="industry">Industry</label>
+                    <input type="text" id="industry" name="industry" placeholder="e.g., Technology, Healthcare, Finance">
+                </div>
+                
+                <div class="form-group">
+                    <label for="experience_years">Years of Experience</label>
+                    <select id="experience_years" name="experience_years">
+                        <option value="Entry level">Entry Level (0-2 years)</option>
+                        <option value="Mid-level">Mid-Level (3-5 years)</option>
+                        <option value="Senior">Senior (6-10 years)</option>
+                        <option value="Executive">Executive (10+ years)</option>
+                    </select>
+                </div>
+                
+                <!-- Work Experience -->
+                <div class="form-group">
+                    <label for="job_title">Current/Recent Job Title</label>
+                    <input type="text" id="job_title" name="job_title">
+                </div>
+                
+                <div class="form-group">
+                    <label for="company">Company Name</label>
+                    <input type="text" id="company" name="company">
+                </div>
+                
+                <div class="form-group">
+                    <label for="duration">Employment Duration</label>
+                    <input type="text" id="duration" name="duration" placeholder="e.g., Jan 2020 - Present">
+                </div>
+                
+                <div class="form-group">
+                    <label for="responsibilities">Key Responsibilities</label>
+                    <textarea id="responsibilities" name="responsibilities" placeholder="Describe your main responsibilities and duties..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="achievements">Key Achievements</label>
+                    <textarea id="achievements" name="achievements" placeholder="Quantifiable achievements and accomplishments..."></textarea>
+                </div>
+                
+                <!-- Education -->
+                <div class="form-group">
+                    <label for="degree">Highest Degree</label>
+                    <input type="text" id="degree" name="degree" placeholder="e.g., Bachelor of Science in Computer Science">
+                </div>
+                
+                <div class="form-group">
+                    <label for="school">School/University</label>
+                    <input type="text" id="school" name="school">
+                </div>
+                
+                <div class="form-group">
+                    <label for="grad_year">Graduation Year</label>
+                    <input type="number" id="grad_year" name="grad_year" min="1980" max="2030">
+                </div>
+                
+                <!-- Skills -->
+                <div class="form-group">
+                    <label for="technical_skills">Technical Skills</label>
+                    <textarea id="technical_skills" name="technical_skills" placeholder="Programming languages, software, tools..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="soft_skills">Soft Skills</label>
+                    <textarea id="soft_skills" name="soft_skills" placeholder="Communication, leadership, problem-solving..."></textarea>
+                </div>
+                
+                <button type="button" class="btn" onclick="generateResume()">🚀 Generate AI Resume</button>
+                <button type="button" class="btn btn-secondary" onclick="clearForm()">Clear Form</button>
+                
+                <div class="loading" id="loading">🤖 AI is crafting your professional resume...</div>
+                <div id="message"></div>
+            </form>
+        </div>
+        
+        <!-- Preview Section -->
+        <div class="preview-section">
+            <div class="section-header">📄 Resume Preview</div>
+            <div id="resumePreview" class="resume-preview">
+                <p style="text-align: center; color: #666; margin-top: 2rem;">
+                    Your AI-generated resume will appear here.<br>
+                    Fill out the form and click "Generate AI Resume" to get started!
+                </p>
+            </div>
+            
+            <div style="margin-top: 1rem;">
+                <button type="button" class="btn" onclick="downloadResume()" id="downloadBtn" style="display: none;">📥 Download Resume</button>
+                <button type="button" class="btn btn-secondary" onclick="copyResume()" id="copyBtn" style="display: none;">📋 Copy to Clipboard</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function generateResume() {
+            const form = document.getElementById('resumeForm');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            
+            const loading = document.getElementById('loading');
+            const message = document.getElementById('message');
+            const preview = document.getElementById('resumePreview');
+            
+            loading.style.display = 'block';
+            message.innerHTML = '';
+            
+            try {
+                const response = await fetch('/api/generate-resume', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayResume(result.resume);
+                    message.innerHTML = '<div class="success">✅ Resume generated successfully!</div>';
+                    document.getElementById('downloadBtn').style.display = 'inline-block';
+                    document.getElementById('copyBtn').style.display = 'inline-block';
+                } else {
+                    message.innerHTML = `<div class="error">❌ Error: ${result.error}</div>`;
+                }
+                
+            } catch (error) {
+                message.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+            
+            loading.style.display = 'none';
+        }
+        
+        function displayResume(resume) {
+            const preview = document.getElementById('resumePreview');
+            const personal = resume.personal_info;
+            
+            let html = `
+                <div class="resume-section">
+                    <h2 style="text-align: center; color: #333; margin-bottom: 0.5rem;">${personal.name}</h2>
+                    <div style="text-align: center; color: #666; margin-bottom: 2rem;">
+                        ${personal.email} | ${personal.phone}<br>
+                        ${personal.address}<br>
+                        ${personal.linkedin ? `LinkedIn: ${personal.linkedin}` : ''}
+                    </div>
+                </div>
+                
+                <div class="resume-section">
+                    <h3>PROFESSIONAL SUMMARY</h3>
+                    <p>${resume.summary}</p>
+                </div>
+                
+                <div class="resume-section">
+                    <h3>WORK EXPERIENCE</h3>`;
+            
+            if (Array.isArray(resume.experience)) {
+                resume.experience.forEach(exp => {
+                    html += `<div style="margin-bottom: 1.5rem;">${exp}</div>`;
+                });
+            }
+            
+            html += `</div>
+                
+                <div class="resume-section">
+                    <h3>EDUCATION</h3>
+                    <p>${resume.education}</p>
+                </div>
+                
+                <div class="resume-section">
+                    <h3>SKILLS</h3>
+                    <p>${resume.skills}</p>
+                </div>
+            `;
+            
+            preview.innerHTML = html;
+        }
+        
+        function clearForm() {
+            document.getElementById('resumeForm').reset();
+            document.getElementById('resumePreview').innerHTML = `
+                <p style="text-align: center; color: #666; margin-top: 2rem;">
+                    Your AI-generated resume will appear here.<br>
+                    Fill out the form and click "Generate AI Resume" to get started!
+                </p>
+            `;
+            document.getElementById('downloadBtn').style.display = 'none';
+            document.getElementById('copyBtn').style.display = 'none';
+            document.getElementById('message').innerHTML = '';
+        }
+        
+        function copyResume() {
+            const preview = document.getElementById('resumePreview');
+            const text = preview.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                document.getElementById('message').innerHTML = '<div class="success">✅ Resume copied to clipboard!</div>';
+            });
+        }
+        
+        function downloadResume() {
+            const preview = document.getElementById('resumePreview');
+            const text = preview.innerText;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'resume.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+    </main>
+</body>
+</html>

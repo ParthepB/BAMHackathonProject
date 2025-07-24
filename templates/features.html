@@ -12,7 +12,10 @@
 
   <main>
     <header>
-      <h1>NextStep</h1>
+      <div class="logo-section">
+        <img src="/static/images/NextStep.png" alt="NextStep Logo" class="logo">
+        <h1>NextStep</h1>
+      </div>
       <nav>
         <a href="{{ url_for('home') }}">Home</a>
         <div class="dropdown">
@@ -21,6 +24,7 @@
             <a href="{{ url_for('rmaker') }}">Resume Maker</a>
             <a href="{{ url_for('rgrader') }}">Resume Grader</a>
             <a href="{{ url_for('mock') }}">Mock Interview Bot</a>
+            <a href="{{ url_for('career_quiz') }}">Career Quiz</a>
           </div>
         </div>
         <a href="{{ url_for('about') }}">About</a>

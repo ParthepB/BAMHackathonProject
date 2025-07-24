@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Career Quiz - NextStep</title>
+  <link rel="stylesheet" href="/static/css/career-quiz.css">
+</head>
+
+<body>
+
+  <main>
+    <header>
+      <div class="logo-section">
+        <img src="/static/images/NextStep.png" alt="NextStep Logo" class="logo">
+        <h1>NextStep</h1>
+      </div>
+      <nav>
+        <a href="{{ url_for('home') }}">Home</a>
+        <div class="dropdown">
+          <a href="{{ url_for('features') }}" class="dropbtn">Features</a>
+          <div class="dropdown-content">
+            <a href="{{ url_for('rmaker') }}">Resume Maker</a>
+            <a href="{{ url_for('rgrader') }}">Resume Grader</a>
+            <a href="{{ url_for('mock') }}">Mock Interview Bot</a>
+            <a href="{{ url_for('career_quiz') }}">Career Quiz</a>
+          </div>
+        </div>
+        <a href="{{ url_for('about') }}">About</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
+        <a href="{{ url_for('settings') }}">Settings</a>
+        <a href="{{ url_for('logout') }}" id="logout-btn">Logout</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <h2>Career Discovery Quiz</h2>
+      <p>Discover your ideal career path with our comprehensive assessment</p>
+    </section>
+
+    <div class="quiz-container">
+      <!-- Step 1: Career Type Selection -->
+      <div id="step-1" class="quiz-step active">
+        <div class="step-header">
+          <h3>Step 1: Select Your Interest Area</h3>
+          <div class="progress-bar">
+            <div class="progress" style="width: 16.66%"></div>
+          </div>
+        </div>
+        
+        <div class="question-container">
+          <h4>Which career field interests you most?</h4>
+          <div class="career-options">
+            <button class="career-option" data-career="medical" onclick="selectCareer('medical')">
+              <div class="option-icon">🏥</div>
+              <h5>Medical</h5>
+              <p>Healthcare, medicine, and life sciences</p>
+            </button>
+            
+            <button class="career-option" data-career="tech" onclick="selectCareer('tech')">
+              <div class="option-icon">💻</div>
+              <h5>Technology</h5>
+              <p>Software, engineering, and innovation</p>
+            </button>
+            
+            <button class="career-option" data-career="business" onclick="selectCareer('business')">
+              <div class="option-icon">💼</div>
+              <h5>Business</h5>
+              <p>Management, finance, and entrepreneurship</p>
+            </button>
+            
+            <button class="career-option" data-career="education" onclick="selectCareer('education')">
+              <div class="option-icon">📚</div>
+              <h5>Education</h5>
+              <p>Teaching, training, and knowledge sharing</p>
+            </button>
+            
+            <button class="career-option" data-career="arts" onclick="selectCareer('arts')">
+              <div class="option-icon">🎨</div>
+              <h5>Arts & Creative</h5>
+              <p>Design, media, and creative expression</p>
+            </button>
+            
+            <button class="career-option" data-career="other" onclick="selectCareer('other')">
+              <div class="option-icon">🌟</div>
+              <h5>Other</h5>
+              <p>Explore various other career paths</p>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Steps 2-6: Specific Questions for each career -->
+      <div id="step-questions" class="quiz-step">
+        <!-- Dynamic questions will be loaded here -->
+      </div>
+
+      <!-- Step 7: Results -->
+      <div id="step-results" class="quiz-step">
+        <div class="results-container">
+          <h3>🎉 Your Career Recommendations</h3>
+          <div id="recommendations-list">
+            <!-- Results will be displayed here -->
+          </div>
+          
+          <div class="results-actions">
+            <button class="primary-btn" onclick="retakeQuiz()">Retake Quiz</button>
+            <button class="secondary-btn" onclick="saveResults()">Save Results</button>
+            <a href="{{ url_for('home') }}" class="secondary-btn">Back to Home</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>&copy; 2025 NextStep. All rights reserved.</p>
+    </div>
+    
+    <script src="/static/js/style.js"></script>
+    <script>
+      let currentStep = 1;
+      let selectedCareer = '';
+      let answers = {};
+      let questions = {};
+      
+      // Career-specific questions
+      const careerQuestions = {
+        medical: [
+          {
+            question: "How comfortable are you with high-stress, life-or-death situations?",
+            options: [
+              { text: "Very comfortable, I thrive under pressure", value: 5 },
+              { text: "Somewhat comfortable", value: 4 },
+              { text: "Neutral", value: 3 },
+              { text: "Somewhat uncomfortable", value: 2 },
+              { text: "Very uncomfortable", value: 1 }
+            ]
+          },
+          {
+            question: "How do you feel about continuous learning and staying updated with medical advances?",
+            options: [
+              { text: "I love learning and staying current", value: 5 },
+              { text: "I enjoy learning new things", value: 4 },
+              { text: "It's okay, I can manage", value: 3 },
+              { text: "I prefer stable knowledge", value: 2 },
+              { text: "I dislike constant learning", value: 1 }
+            ]
+          },
+          {
+            question: "How important is helping people directly in your career?",
+            options: [
+              { text: "Extremely important, it's my passion", value: 5 },
+              { text: "Very important", value: 4 },
+              { text: "Somewhat important", value: 3 },
+              { text: "Not very important", value: 2 },
+              { text: "Not important at all", value: 1 }
+            ]
+          },
+          {
+            question: "How do you handle seeing people in pain or distress?",
+            options: [
+              { text: "I remain calm and focused on helping", value: 5 },
+              { text: "It's difficult but I can manage", value: 4 },
+              { text: "It affects me but I push through", value: 3 },
+              { text: "It's very difficult for me", value: 2 },
+              { text: "I can't handle it well", value: 1 }
+            ]
+          },
+          {
+            question: "How do you feel about long, irregular working hours?",
+            options: [
+              { text: "I'm perfectly fine with it", value: 5 },
+              { text: "I can adapt to it", value: 4 },
+              { text: "It's manageable", value: 3 },
+              { text: "I prefer regular hours", value: 2 },
+              { text: "I need consistent schedule", value: 1 }
+            ]
+          }
+        ],
+        tech: [
+          {
+            question: "How much do you enjoy solving complex logical problems?",
+            options: [
+              { text: "I absolutely love it", value: 5 },
+              { text: "I enjoy it most of the time", value: 4 },
+              { text: "It's okay", value: 3 },
+              { text: "I find it somewhat tedious", value: 2 },
+              { text: "I dislike complex problems", value: 1 }
+            ]
+          },
+          {
+            question: "How comfortable are you with constantly learning new technologies?",
+            options: [
+              { text: "I thrive on learning new tech", value: 5 },
+              { text: "I enjoy staying current", value: 4 },
+              { text: "I can keep up when needed", value: 3 },
+              { text: "I prefer stable technologies", value: 2 },
+              { text: "I dislike constant change", value: 1 }
+            ]
+          },
+          {
+            question: "How do you prefer to work on projects?",
+            options: [
+              { text: "Independently with minimal supervision", value: 5 },
+              { text: "Small team collaboration", value: 4 },
+              { text: "Mix of both", value: 3 },
+              { text: "Large team environment", value: 2 },
+              { text: "Highly structured environment", value: 1 }
+            ]
+          },
+          {
+            question: "How do you handle debugging and troubleshooting?",
+            options: [
+              { text: "I love the challenge", value: 5 },
+              { text: "I'm good at it", value: 4 },
+              { text: "I can manage", value: 3 },
+              { text: "I find it frustrating", value: 2 },
+              { text: "I avoid it when possible", value: 1 }
+            ]
+          },
+          {
+            question: "How important is creating something innovative or impactful?",
+            options: [
+              { text: "Extremely important", value: 5 },
+              { text: "Very important", value: 4 },
+              { text: "Somewhat important", value: 3 },
+              { text: "Not very important", value: 2 },
+              { text: "Not important", value: 1 }
+            ]
+          }
+        ],
+        business: [
+          {
+            question: "How comfortable are you with making important decisions under pressure?",
+            options: [
+              { text: "Very comfortable, I excel at it", value: 5 },
+              { text: "Comfortable most of the time", value: 4 },
+              { text: "I can manage when needed", value: 3 },
+              { text: "I prefer to have more time", value: 2 },
+              { text: "I avoid high-pressure decisions", value: 1 }
+            ]
+          },
+          {
+            question: "How do you feel about networking and building relationships?",
+            options: [
+              { text: "I love meeting new people", value: 5 },
+              { text: "I enjoy networking", value: 4 },
+              { text: "It's okay", value: 3 },
+              { text: "I find it somewhat difficult", value: 2 },
+              { text: "I prefer to avoid it", value: 1 }
+            ]
+          },
+          {
+            question: "How important is financial success in your career?",
+            options: [
+              { text: "Extremely important", value: 5 },
+              { text: "Very important", value: 4 },
+              { text: "Somewhat important", value: 3 },
+              { text: "Not very important", value: 2 },
+              { text: "Not important at all", value: 1 }
+            ]
+          },
+          {
+            question: "How do you handle competition and competitive environments?",
+            options: [
+              { text: "I thrive in competition", value: 5 },
+              { text: "I enjoy healthy competition", value: 4 },
+              { text: "I can handle it", value: 3 },
+              { text: "I prefer collaboration", value: 2 },
+              { text: "I avoid competitive situations", value: 1 }
+            ]
+          },
+          {
+            question: "How comfortable are you with taking calculated risks?",
+            options: [
+              { text: "I love taking risks", value: 5 },
+              { text: "I'm comfortable with calculated risks", value: 4 },
+              { text: "I take risks when necessary", value: 3 },
+              { text: "I prefer low-risk situations", value: 2 },
+              { text: "I avoid risks completely", value: 1 }
+            ]
+          }
+        ],
+        education: [
+          {
+            question: "How much do you enjoy explaining complex concepts to others?",
+            options: [
+              { text: "I absolutely love it", value: 5 },
+              { text: "I enjoy it most of the time", value: 4 },
+              { text: "It's okay", value: 3 },
+              { text: "I find it somewhat challenging", value: 2 },
+              { text: "I dislike explaining things", value: 1 }
+            ]
+          },
+          {
+            question: "How patient are you with people who learn at different speeds?",
+            options: [
+              { text: "Extremely patient", value: 5 },
+              { text: "Very patient", value: 4 },
+              { text: "Moderately patient", value: 3 },
+              { text: "Somewhat impatient", value: 2 },
+              { text: "I get frustrated easily", value: 1 }
+            ]
+          },
+          {
+            question: "How do you feel about inspiring and motivating others?",
+            options: [
+              { text: "It's my passion", value: 5 },
+              { text: "I enjoy motivating others", value: 4 },
+              { text: "It's part of the job", value: 3 },
+              { text: "I find it challenging", value: 2 },
+              { text: "I prefer not to", value: 1 }
+            ]
+          },
+          {
+            question: "How comfortable are you with public speaking?",
+            options: [
+              { text: "I love speaking to groups", value: 5 },
+              { text: "I'm comfortable with it", value: 4 },
+              { text: "I can manage when needed", value: 3 },
+              { text: "I find it somewhat stressful", value: 2 },
+              { text: "I avoid it at all costs", value: 1 }
+            ]
+          },
+          {
+            question: "How important is making a positive impact on future generations?",
+            options: [
+              { text: "Extremely important", value: 5 },
+              { text: "Very important", value: 4 },
+              { text: "Somewhat important", value: 3 },
+              { text: "Not very important", value: 2 },
+              { text: "Not important", value: 1 }
+            ]
+          }
+        ],
+        arts: [
+          {
+            question: "How important is creative expression in your daily work?",
+            options: [
+              { text: "Absolutely essential", value: 5 },
+              { text: "Very important", value: 4 },
+              { text: "Somewhat important", value: 3 },
+              { text: "Not very important", value: 2 },
+              { text: "Not important", value: 1 }
+            ]
+          },
+          {
+            question: "How do you handle criticism of your creative work?",
+            options: [
+              { text: "I welcome it for improvement", value: 5 },
+              { text: "I handle it well", value: 4 },
+              { text: "It's okay but can sting", value: 3 },
+              { text: "I find it difficult", value: 2 },
+              { text: "I take it very personally", value: 1 }
+            ]
+          },
+          {
+            question: "How comfortable are you with irregular income?",
+            options: [
+              { text: "Perfectly fine with it", value: 5 },
+              { text: "I can manage uncertainty", value: 4 },
+              { text: "It's manageable", value: 3 },
+              { text: "I prefer some stability", value: 2 },
+              { text: "I need steady income", value: 1 }
+            ]
+          },
+          {
+            question: "How do you feel about self-promotion and marketing your work?",
+            options: [
+              { text: "I enjoy promoting my work", value: 5 },
+              { text: "I'm comfortable with it", value: 4 },
+              { text: "I can do it when necessary", value: 3 },
+              { text: "I find it uncomfortable", value: 2 },
+              { text: "I dislike self-promotion", value: 1 }
+            ]
+          },
+          {
+            question: "How important is having artistic freedom in your work?",
+            options: [
+              { text: "Absolutely critical", value: 5 },
+              { text: "Very important", value: 4 },
+              { text: "Somewhat important", value: 3 },
+              { text: "Not very important", value: 2 },
+              { text: "I prefer clear guidelines", value: 1 }
+            ]
+          }
+        ],
+        other: [
+          {
+            question: "What type of work environment do you prefer?",
+            options: [
+              { text: "Outdoor/fieldwork", value: 5 },
+              { text: "Mixed indoor/outdoor", value: 4 },
+              { text: "Traditional office", value: 3 },
+              { text: "Remote/home office", value: 2 },
+              { text: "Laboratory/workshop", value: 1 }
+            ]
+          },
+          {
+            question: "How important is work-life balance to you?",
+            options: [
+              { text: "Extremely important", value: 5 },
+              { text: "Very important", value: 4 },
+              { text: "Somewhat important", value: 3 },
+              { text: "Not very important", value: 2 },
+              { text: "I prefer work-focused life", value: 1 }
+            ]
+          },
+          {
+            question: "What type of impact do you want to make?",
+            options: [
+              { text: "Environmental/sustainability", value: 5 },
+              { text: "Social/community", value: 4 },
+              { text: "Economic/business", value: 3 },
+              { text: "Individual/personal", value: 2 },
+              { text: "I'm not sure", value: 1 }
+            ]
+          },
+          {
+            question: "How do you prefer to use your skills?",
+            options: [
+              { text: "Hands-on practical work", value: 5 },
+              { text: "Research and analysis", value: 4 },
+              { text: "Planning and strategy", value: 3 },
+              { text: "Communication and interaction", value: 2 },
+              { text: "I'm exploring different options", value: 1 }
+            ]
+          },
+          {
+            question: "What motivates you most in a career?",
+            options: [
+              { text: "Making a difference", value: 5 },
+              { text: "Personal growth", value: 4 },
+              { text: "Financial security", value: 3 },
+              { text: "Recognition and status", value: 2 },
+              { text: "Stability and routine", value: 1 }
+            ]
+          }
+        ]
+      };
+
+      function selectCareer(career) {
+        selectedCareer = career;
+        
+        // Update visual selection
+        document.querySelectorAll('.career-option').forEach(option => {
+          option.classList.remove('selected');
+        });
+        document.querySelector(`[data-career="${career}"]`).classList.add('selected');
+        
+        // Show next button
+        setTimeout(() => {
+          showQuestions();
+        }, 500);
+      }
+
+      function showQuestions() {
+        document.getElementById('step-1').classList.remove('active');
+        document.getElementById('step-questions').classList.add('active');
+        
+        const questionsContainer = document.getElementById('step-questions');
+        const questionsData = careerQuestions[selectedCareer];
+        
+        let questionsHTML = '';
+        
+        questionsData.forEach((q, index) => {
+          questionsHTML += `
+            <div class="question-step ${index === 0 ? 'active' : ''}" id="question-${index}">
+              <div class="step-header">
+                <h3>Question ${index + 1} of ${questionsData.length}</h3>
+                <div class="progress-bar">
+                  <div class="progress" style="width: ${((index + 2) / 7) * 100}%"></div>
+                </div>
+              </div>
+              
+              <div class="question-container">
+                <h4>${q.question}</h4>
+                <div class="answer-options">
+                  ${q.options.map((option, optIndex) => `
+                    <button class="answer-option" onclick="selectAnswer(${index}, ${option.value}, '${option.text}')">
+                      ${option.text}
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        
+        questionsContainer.innerHTML = questionsHTML;
+      }
+
+      function selectAnswer(questionIndex, value, text) {
+        answers[questionIndex] = { value, text };
+        
+        // Visual feedback
+        const currentQuestion = document.getElementById(`question-${questionIndex}`);
+        const options = currentQuestion.querySelectorAll('.answer-option');
+        options.forEach(option => option.classList.remove('selected'));
+        event.target.classList.add('selected');
+        
+        // Move to next question or results
+        setTimeout(() => {
+          const nextQuestionIndex = questionIndex + 1;
+          const totalQuestions = careerQuestions[selectedCareer].length;
+          
+          if (nextQuestionIndex < totalQuestions) {
+            currentQuestion.classList.remove('active');
+            document.getElementById(`question-${nextQuestionIndex}`).classList.add('active');
+          } else {
+            // All questions answered, show results
+            submitQuiz();
+          }
+        }, 500);
+      }
+
+      function submitQuiz() {
+        // Prepare data for backend
+        const quizData = {
+          career_type: selectedCareer,
+          answers: answers
+        };
+
+        // Send to backend
+        fetch('/submit-quiz', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(quizData)
+        })
+        .then(response => response.json())
+        .then(data => {
+          showResults(data.recommendations);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          // Fallback to local processing if backend fails
+          showLocalResults();
+        });
+      }
+
+      function showResults(recommendations) {
+        document.getElementById('step-questions').classList.remove('active');
+        document.getElementById('step-results').classList.add('active');
+        
+        const resultsContainer = document.getElementById('recommendations-list');
+        
+        let resultsHTML = '';
+        recommendations.forEach((rec, index) => {
+          resultsHTML += `
+            <div class="recommendation-card">
+              <div class="recommendation-rank">#${index + 1}</div>
+              <div class="recommendation-content">
+                <h4>${rec.title}</h4>
+                <p class="match-score">Match Score: ${rec.score}%</p>
+                <p class="recommendation-description">${rec.description}</p>
+                <div class="recommendation-details">
+                  <strong>Why this fits you:</strong>
+                  <ul>
+                    ${rec.reasons.map(reason => `<li>${reason}</li>`).join('')}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        
+        resultsContainer.innerHTML = resultsHTML;
+      }
+
+      function showLocalResults() {
+        // Fallback local calculation
+        const recommendations = [
+          {
+            title: "Career Path Analysis",
+            score: 85,
+            description: "Based on your responses, we've identified several career paths that align with your interests and strengths.",
+            reasons: [
+              "Your answers indicate strong alignment with this field",
+              "Your personality traits match well with typical requirements",
+              "Your preferences align with the work environment"
+            ]
+          }
+        ];
+        
+        showResults(recommendations);
+      }
+
+      function retakeQuiz() {
+        currentStep = 1;
+        selectedCareer = '';
+        answers = {};
+        
+        document.querySelectorAll('.quiz-step').forEach(step => {
+          step.classList.remove('active');
+        });
+        document.getElementById('step-1').classList.add('active');
+        
+        document.querySelectorAll('.career-option').forEach(option => {
+          option.classList.remove('selected');
+        });
+      }
+
+      function saveResults() {
+        // Save to localStorage
+        const results = {
+          career_type: selectedCareer,
+          answers: answers,
+          timestamp: new Date().toISOString()
+        };
+        
+        localStorage.setItem('quiz_results', JSON.stringify(results));
+        alert('Results saved successfully!');
+      }
+    </script>
+  </main>
+</body>
+
+</html>

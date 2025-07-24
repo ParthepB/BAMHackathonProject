@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NextStep</title>
   <link rel="stylesheet" href="/static/css/home.css">
@@ -12,12 +13,16 @@
 
   <main>
     <header>
-      <h1>NextStep</h1>
+      <div class="logo-section">
+        <img src="/static/images/NextStep.png" alt="NextStep Logo" class="logo">
+        <h1>NextStep</h1>
+      </div>
       <nav>
         <a href="{{ url_for('home') }}">Home</a>
         <div class="dropdown">
           <a href="{{ url_for('features') }}" class="dropbtn">Features</a>
           <div class="dropdown-content">
+            <a href="{{ url_for('career_quiz') }}">Career Quiz</a>
             <a href="{{ url_for('rmaker') }}">Resume Maker</a>
             <a href="{{ url_for('rgrader') }}">Resume Grader</a>
             <a href="{{ url_for('mock') }}">Mock Interview Bot</a>
@@ -33,32 +38,58 @@
     <section class="hero">
       <h2 class="typing-container">
         <span id="username-display"></span>
-        <span class="typing-text done">Your Future, One Step Ahead</span>
+        <span class="typing-text done">Your Next Career, All Starts Here</span>
       </h2>
       <p>NextStep helps you plan, track, and achieve your goals with clarity and confidence. Designed for dreamers,
         doers, and everyone in between.</p>
       
-      <!-- Checkbox hack for modal -->
-      <input type="checkbox" id="quiz-modal-toggle" style="display:none;">
-      <label for="quiz-modal-toggle" class="quiz-btn">Get Started with NextStep's Career Quiz</label>
+      <!-- Direct link to career quiz -->
+      <a href="{{ url_for('career_quiz') }}" class="quiz-btn">Get Started with NextStep's Career Quiz</a>
+    </section>
 
-      <div id="career-quiz-modal" class="modal">
-        <div class="modal-content">
-          <label for="quiz-modal-toggle" class="close-btn">&times;</label>
-          <form method="POST" action="/career-quiz">
-            <h3>What type of career are you interested in?</h3>
-            <select name="career_type" required>
-              <option value="" disabled selected>Select one</option>
-              <option value="Medical">Medical</option>
-              <option value="Tech">Tech</option>
-              <option value="Business">Business</option>
-              <option value="Education">Education</option>
-              <option value="Arts">Arts</option>
-              <option value="Other">Other</option>
-            </select>
-            <br><br>
-            <button type="submit" class="quiz-btn">Next</button>
-          </form>
+    <!-- Feature sections with scroll animations -->
+    <section class="feature-section" data-animate="fade-up">
+      <div class="feature-content">
+        <h2>Discover Your Path</h2>
+        <p>Our AI-powered career quiz analyzes your interests, skills, and personality to recommend the perfect career path tailored just for you.</p>
+        <div class="feature-visual">
+          <div class="floating-card card-1">🎯</div>
+          <div class="floating-card card-2">💡</div>
+          <div class="floating-card card-3">🚀</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="feature-section dark" data-animate="slide-left">
+      <div class="feature-content">
+        <h2>Build Your Future</h2>
+        <p>Create professional resumes, practice with our AI interview bot, and get personalized feedback to land your dream job.</p>
+        <div class="feature-grid">
+          <div class="grid-item" data-animate="scale-up">📄 Resume Builder</div>
+          <div class="grid-item" data-animate="scale-up">🤖 Interview Practice</div>
+          <div class="grid-item" data-animate="scale-up">📊 Career Analytics</div>
+          <div class="grid-item" data-animate="scale-up">🎓 Skill Assessment</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="feature-section gradient" data-animate="fade-up">
+      <div class="feature-content">
+        <h2>Your Success Story Starts Here</h2>
+        <p>Join thousands of professionals who have transformed their careers with NextStep's comprehensive platform.</p>
+        <div class="stats-container">
+          <div class="stat-item" data-animate="counter">
+            <span class="stat-number" data-target="10000">0</span>
+            <span class="stat-label">Careers Launched</span>
+          </div>
+          <div class="stat-item" data-animate="counter">
+            <span class="stat-number" data-target="95">0</span>
+            <span class="stat-label">Success Rate</span>
+          </div>
+          <div class="stat-item" data-animate="counter">
+            <span class="stat-number" data-target="500">0</span>
+            <span class="stat-label">Companies</span>
+          </div>
         </div>
       </div>
     </section>
@@ -67,6 +98,70 @@
       <p>&copy; 2025 NextStep. All rights reserved.</p>
     </div>
     <script src="/static/js/style.js"></script>
+    <script>
+      // Scroll animations
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -100px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate');
+            
+            // Handle counter animations
+            if (entry.target.hasAttribute('data-animate') && entry.target.getAttribute('data-animate') === 'counter') {
+              animateCounters(entry.target);
+            }
+            
+            // Handle grid items
+            if (entry.target.classList.contains('feature-grid')) {
+              const items = entry.target.querySelectorAll('.grid-item');
+              items.forEach((item, index) => {
+                setTimeout(() => {
+                  item.classList.add('animate');
+                }, index * 200);
+              });
+            }
+          }
+        });
+      }, observerOptions);
+
+      // Observe all sections and stat items
+      document.querySelectorAll('.feature-section, .stat-item, .feature-grid').forEach(el => {
+        observer.observe(el);
+      });
+
+      // Counter animation function
+      function animateCounters(container) {
+        const counters = container.querySelectorAll('.stat-number');
+        counters.forEach(counter => {
+          const target = parseInt(counter.getAttribute('data-target'));
+          const increment = target / 100;
+          let current = 0;
+          
+          const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+              counter.textContent = target + (target === 95 ? '%' : '+');
+              clearInterval(timer);
+            } else {
+              counter.textContent = Math.floor(current) + (target === 95 ? '%' : '+');
+            }
+          }, 20);
+        });
+      }
+
+      // Parallax effect for hero section
+      window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const hero = document.querySelector('.hero');
+        if (hero) {
+          hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+        }
+      });
+    </script>
   </main>
 </body>
 
