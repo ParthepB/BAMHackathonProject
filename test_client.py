@@ -21,7 +21,7 @@ try:
     client = AzureOpenAI(
         api_key=AOAI_KEY,
         azure_endpoint=AOAI_ENDPOINT,
-        api_version="2023-05-15"
+        api_version="2024-05-01-preview"
     )
     
     print("✅ Azure OpenAI client initialized successfully!")

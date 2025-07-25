@@ -1,7 +1,7 @@
-from flask import Flask, render_template, redirect, url_for, request, jsonify
+from flask import Flask, render_template, redirect, url_for, request, jsonify, send_file
 from quiz import process_career_quiz
-from rmaker import generate_full_resume
-import json
+from rmaker import generate_full_resume, generate_resume_pdf
+import io
 
 app = Flask(__name__)
 
@@ -82,31 +82,65 @@ def submit_quiz():
 
 @app.route('/api/generate-resume', methods=['POST'])
 def generate_resume_api():
-    """Generate resume using AI"""
+    """Handle resume generation and return JSON response"""
     try:
-        data = request.get_json()
+        user_data = request.get_json()
+        print(f"Received user data: {user_data}")
         
-        # Validate required fields
-        if not data.get('name') or not data.get('target_role'):
-            return jsonify({
-                'success': False,
-                'error': 'Name and target role are required'
-            }), 400
+        # Generate the resume
+        resume = generate_full_resume(user_data)
+        print(f"Generated resume: {resume}")
         
-        # Generate resume using AI
-        result = generate_full_resume(data)
-        return jsonify(result)
+        return jsonify({
+            'success': True,
+            'resume': resume
+        })
         
     except Exception as e:
+        print(f"Error in generate_resume_api: {e}")
         return jsonify({
             'success': False,
-            'error': f'Failed to generate resume: {str(e)}'
+            'error': str(e)
+        }), 500
+
+@app.route('/api/download-resume-pdf', methods=['POST'])
+def download_resume_pdf():
+    """Generate and download resume as PDF"""
+    try:
+        user_data = request.get_json()
+        print(f"Generating PDF for user data: {user_data}")
+        
+        # Generate the resume data
+        resume = generate_full_resume(user_data)
+        
+        # Generate PDF
+        pdf_content = generate_resume_pdf(resume)
+        
+        # Create a file-like object
+        pdf_buffer = io.BytesIO(pdf_content)
+        pdf_buffer.seek(0)
+        
+        # Get the user's name for filename, or use default
+        filename = f"{resume['personal_info'].get('name', 'Resume').replace(' ', '_')}_Resume.pdf"
+        
+        return send_file(
+            pdf_buffer,
+            as_attachment=True,
+            download_name=filename,
+            mimetype='application/pdf'
+        )
+        
+    except Exception as e:
+        print(f"Error generating PDF: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
         }), 500
 
 @app.route('/quiz-result')
 def quiz_result():
-    """Display quiz results page"""
-    return render_template('quiz_result.html')
+    """Display quiz result page"""
+    return render_template('quiz-result.html')
 
 @app.route('/logout')
 def logout():

@@ -157,7 +157,8 @@
             </div>
             
             <div style="margin-top: 1rem;">
-                <button type="button" class="btn" onclick="downloadResume()" id="downloadBtn" style="display: none;">📥 Download Resume</button>
+                <button type="button" class="btn" onclick="downloadResume()" id="downloadBtn" style="display: none;">📥 Download Text</button>
+                <button type="button" class="btn" onclick="downloadResumePDF()" id="downloadPdfBtn" style="display: none;">📄 Download PDF</button>
                 <button type="button" class="btn btn-secondary" onclick="copyResume()" id="copyBtn" style="display: none;">📋 Copy to Clipboard</button>
             </div>
         </div>
@@ -186,17 +187,18 @@
                 });
                 
                 const result = await response.json();
-                
+                console.log("This is the result from generateResume", result);
                 if (result.success) {
                     displayResume(result.resume);
                     message.innerHTML = '<div class="success">✅ Resume generated successfully!</div>';
                     document.getElementById('downloadBtn').style.display = 'inline-block';
+                    document.getElementById('downloadPdfBtn').style.display = 'inline-block';  // Add this line
                     document.getElementById('copyBtn').style.display = 'inline-block';
-                } else {
+                } else { console.log("This is the error for it not being on the website", result);
                     message.innerHTML = `<div class="error">❌ Error: ${result.error}</div>`;
                 }
-                
-            } catch (error) {
+
+            } catch (error) {console.log("This is catch error for it not being on the website", error);
                 message.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
             }
             
@@ -205,42 +207,36 @@
         
         function displayResume(resume) {
             const preview = document.getElementById('resumePreview');
-            const personal = resume.personal_info;
+            const personal = resume.personal_info || {};
             
             let html = `
                 <div class="resume-section">
-                    <h2 style="text-align: center; color: #333; margin-bottom: 0.5rem;">${personal.name}</h2>
-                    <div style="text-align: center; color: #666; margin-bottom: 2rem;">
-                        ${personal.email} | ${personal.phone}<br>
-                        ${personal.address}<br>
+                    <h2 style="text-align: center; color: #333; margin-bottom: 0.5rem; font-size: 1.8rem;">${personal.name || 'Name Not Provided'}</h2>
+                    <div style="text-align: center; color: #666; margin-bottom: 2rem; font-size: 0.9rem;">
+                        ${personal.email || ''} ${personal.phone ? '| ' + personal.phone : ''}<br>
+                        ${personal.address || ''}<br>
                         ${personal.linkedin ? `LinkedIn: ${personal.linkedin}` : ''}
                     </div>
                 </div>
                 
-                <div class="resume-section">
-                    <h3>PROFESSIONAL SUMMARY</h3>
-                    <p>${resume.summary}</p>
+                <div class="resume-section" style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #0071e3; border-bottom: 2px solid #0071e3; padding-bottom: 0.3rem; margin-bottom: 0.8rem;">PROFESSIONAL SUMMARY</h3>
+                    <div style="white-space: pre-line; line-height: 1.6; text-align: justify;">${resume.summary || 'No summary available'}</div>
                 </div>
                 
-                <div class="resume-section">
-                    <h3>WORK EXPERIENCE</h3>`;
-            
-            if (Array.isArray(resume.experience)) {
-                resume.experience.forEach(exp => {
-                    html += `<div style="margin-bottom: 1.5rem;">${exp}</div>`;
-                });
-            }
-            
-            html += `</div>
-                
-                <div class="resume-section">
-                    <h3>EDUCATION</h3>
-                    <p>${resume.education}</p>
+                <div class="resume-section" style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #0071e3; border-bottom: 2px solid #0071e3; padding-bottom: 0.3rem; margin-bottom: 0.8rem;">WORK EXPERIENCE</h3>
+                    <div style="white-space: pre-line; line-height: 1.6;">${resume.experience || 'No experience provided'}</div>
                 </div>
                 
-                <div class="resume-section">
-                    <h3>SKILLS</h3>
-                    <p>${resume.skills}</p>
+                <div class="resume-section" style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #0071e3; border-bottom: 2px solid #0071e3; padding-bottom: 0.3rem; margin-bottom: 0.8rem;">EDUCATION</h3>
+                    <div style="white-space: pre-line; line-height: 1.6;">${resume.education || 'No education provided'}</div>
+                </div>
+                
+                <div class="resume-section" style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #0071e3; border-bottom: 2px solid #0071e3; padding-bottom: 0.3rem; margin-bottom: 0.8rem;">SKILLS</h3>
+                    <div style="white-space: pre-line; line-height: 1.6;">${resume.skills || 'No skills provided'}</div>
                 </div>
             `;
             
@@ -256,6 +252,7 @@
                 </p>
             `;
             document.getElementById('downloadBtn').style.display = 'none';
+            document.getElementById('downloadPdfBtn').style.display = 'none';  // Add this line
             document.getElementById('copyBtn').style.display = 'none';
             document.getElementById('message').innerHTML = '';
         }
@@ -280,6 +277,46 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
+        }
+        
+        function downloadResumePDF() {
+            const form = document.getElementById('resumeForm');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            
+            const message = document.getElementById('message');
+            message.innerHTML = '<div class="loading">🔄 Generating PDF...</div>';
+            
+            fetch('/api/download-resume-pdf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.blob();
+                }
+                throw new Error('Failed to generate PDF');
+            })
+            .then(blob => {
+                // Create download link
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${data.name || 'Resume'}_AI_Generated.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                message.innerHTML = '<div class="success">✅ PDF downloaded successfully!</div>';
+            })
+            .catch(error => {
+                console.error('Error downloading PDF:', error);
+                message.innerHTML = '<div class="error">❌ Error generating PDF</div>';
+            });
         }
     </script>
     </main>
