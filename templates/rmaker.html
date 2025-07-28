@@ -87,28 +87,36 @@
                 
                 <!-- Work Experience -->
                 <div class="form-group">
-                    <label for="job_title">Current/Recent Job Title</label>
-                    <input type="text" id="job_title" name="job_title">
+                    <label for="job_title">Job Title</label>
+                    <input type="text" id="job_title" name="job_title" placeholder="Software Engineer, Marketing Manager, etc." required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="company">Company Name</label>
-                    <input type="text" id="company" name="company">
+                    <label for="company">Company</label>
+                    <input type="text" id="company" name="company" placeholder="Company name" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="duration">Employment Duration</label>
-                    <input type="text" id="duration" name="duration" placeholder="e.g., Jan 2020 - Present">
+                    <label for="duration">Duration</label>
+                    <input type="text" id="duration" name="duration" placeholder="January 2020 - Present" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="responsibilities">Key Responsibilities</label>
-                    <textarea id="responsibilities" name="responsibilities" placeholder="Describe your main responsibilities and duties..."></textarea>
+                    <textarea id="responsibilities" name="responsibilities" placeholder="• Managed team of 5 developers&#10;• Increased sales by 25%&#10;• Led project implementation" required></textarea>
                 </div>
                 
                 <div class="form-group">
-                    <label for="achievements">Key Achievements</label>
-                    <textarea id="achievements" name="achievements" placeholder="Quantifiable achievements and accomplishments..."></textarea>
+                    <label for="achievements">Major Achievements</label>
+                    <textarea id="achievements" name="achievements" placeholder="• Won Employee of the Year award&#10;• Reduced processing time by 40%&#10;• Implemented new system"></textarea>
+                </div>
+                
+                <!-- Container for additional experiences -->
+                <div id="additional-experiences"></div>
+                
+                <!-- Add Experience Button -->
+                <div style="margin: 1rem 0;">
+                    <button type="button" class="btn btn-secondary" onclick="addExperience()">➕ Add Another Experience</button>
                 </div>
                 
                 <!-- Education -->
@@ -165,19 +173,56 @@
     </div>
 
     <script>
+        let experienceCount = 1; // Keep track of experience entries
+
         async function generateResume() {
-            const form = document.getElementById('resumeForm');
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-            
             const loading = document.getElementById('loading');
             const message = document.getElementById('message');
-            const preview = document.getElementById('resumePreview');
             
             loading.style.display = 'block';
             message.innerHTML = '';
             
             try {
+                const form = document.getElementById('resumeForm');
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                // Collect all experience entries
+                const experiences = [];
+                
+                // Add the main experience
+                if (data.job_title || data.company) {
+                    experiences.push({
+                        job_title: data.job_title || '',
+                        company: data.company || '',
+                        duration: data.duration || '',
+                        responsibilities: data.responsibilities || '',
+                        achievements: data.achievements || ''
+                    });
+                }
+                
+                // Add additional experiences
+                for (let i = 2; i <= experienceCount; i++) {
+                    const jobTitle = data[`job_title_${i}`];
+                    const company = data[`company_${i}`];
+                    
+                    if (jobTitle || company) {
+                        experiences.push({
+                            job_title: jobTitle || '',
+                            company: company || '',
+                            duration: data[`duration_${i}`] || '',
+                            responsibilities: data[`responsibilities_${i}`] || '',
+                            achievements: data[`achievements_${i}`] || ''
+                        });
+                    }
+                }
+                
+                // Add experiences array to data
+                data.experiences = experiences;
+                
+                console.log("DEBUG: Sending data with experiences array:", data.experiences);
+                console.log("DEBUG: Total experiences:", experiences.length);
+                
                 const response = await fetch('/api/generate-resume', {
                     method: 'POST',
                     headers: {
@@ -187,18 +232,21 @@
                 });
                 
                 const result = await response.json();
-                console.log("This is the result from generateResume", result);
+                console.log("DEBUG: Result from backend:", result);
+                
                 if (result.success) {
                     displayResume(result.resume);
                     message.innerHTML = '<div class="success">✅ Resume generated successfully!</div>';
                     document.getElementById('downloadBtn').style.display = 'inline-block';
-                    document.getElementById('downloadPdfBtn').style.display = 'inline-block';  // Add this line
+                    document.getElementById('downloadPdfBtn').style.display = 'inline-block';
                     document.getElementById('copyBtn').style.display = 'inline-block';
-                } else { console.log("This is the error for it not being on the website", result);
+                } else {
+                    console.log("ERROR: Backend returned error:", result);
                     message.innerHTML = `<div class="error">❌ Error: ${result.error}</div>`;
                 }
 
-            } catch (error) {console.log("This is catch error for it not being on the website", error);
+            } catch (error) {
+                console.log("ERROR: JavaScript catch error:", error);
                 message.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
             }
             
@@ -252,9 +300,13 @@
                 </p>
             `;
             document.getElementById('downloadBtn').style.display = 'none';
-            document.getElementById('downloadPdfBtn').style.display = 'none';  // Add this line
+            document.getElementById('downloadPdfBtn').style.display = 'none';
             document.getElementById('copyBtn').style.display = 'none';
             document.getElementById('message').innerHTML = '';
+            
+            // Clear additional experiences
+            document.getElementById('additional-experiences').innerHTML = '';
+            experienceCount = 1;
         }
         
         function copyResume() {
@@ -317,6 +369,75 @@
                 console.error('Error downloading PDF:', error);
                 message.innerHTML = '<div class="error">❌ Error generating PDF</div>';
             });
+        }
+
+        function addExperience() {
+            experienceCount++;
+            
+            const container = document.getElementById('additional-experiences');
+            const experienceDiv = document.createElement('div');
+            experienceDiv.className = 'experience-entry';
+            experienceDiv.id = `experience-${experienceCount}`;
+            experienceDiv.style.cssText = `
+                border: 2px solid #e0e0e0;
+                border-radius: 8px;
+                padding: 1rem;
+                margin: 1rem 0;
+                background-color: #f9f9f9;
+                position: relative;
+            `;
+            
+            experienceDiv.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h4 style="color: #0071e3; margin: 0;">Professional Experience ${experienceCount}</h4>
+                    <button type="button" class="btn-remove" onclick="removeExperience(${experienceCount})" 
+                            style="background: #ff4444; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer;">
+                        🗑️ Remove
+                    </button>
+                </div>
+                
+                <div class="form-group">
+                    <label for="job_title_${experienceCount}">Job Title</label>
+                    <input type="text" id="job_title_${experienceCount}" name="job_title_${experienceCount}" 
+                           placeholder="Software Engineer, Marketing Manager, etc.">
+                </div>
+
+                <div class="form-group">
+                    <label for="company_${experienceCount}">Company</label>
+                    <input type="text" id="company_${experienceCount}" name="company_${experienceCount}" 
+                           placeholder="Company name">
+                </div>
+
+                <div class="form-group">
+                    <label for="duration_${experienceCount}">Duration</label>
+                    <input type="text" id="duration_${experienceCount}" name="duration_${experienceCount}" 
+                           placeholder="January 2020 - Present">
+                </div>
+
+                <div class="form-group">
+                    <label for="responsibilities_${experienceCount}">Key Responsibilities</label>
+                    <textarea id="responsibilities_${experienceCount}" name="responsibilities_${experienceCount}" 
+                              placeholder="• Managed team of 5 developers&#10;• Increased sales by 25%&#10;• Led project implementation"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="achievements_${experienceCount}">Major Achievements</label>
+                    <textarea id="achievements_${experienceCount}" name="achievements_${experienceCount}" 
+                              placeholder="• Won Employee of the Year award&#10;• Reduced processing time by 40%&#10;• Implemented new system"></textarea>
+                </div>
+            `;
+            
+            container.appendChild(experienceDiv);
+            
+            // Scroll to the new experience entry
+            experienceDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function removeExperience(id) {
+            const experienceDiv = document.getElementById(`experience-${id}`);
+            if (experienceDiv) {
+                experienceDiv.remove();
+            }
         }
     </script>
     </main>

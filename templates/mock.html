@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Mock Interview Bot - NextStep</title>
+    <link rel="stylesheet" href="/static/css/home.css">
+    <link rel="stylesheet" href="/static/css/mock.css">
+</head>
+<body>
+    <main>
+        <header>
+            <div class="logo-section">
+                <img src="/static/images/NextStep.png" alt="NextStep Logo" class="logo">
+                <h1>NextStep</h1>
+            </div>
+            <nav>
+                <a href="{{ url_for('home') }}">Home</a>
+                <div class="dropdown">
+                    <a href="{{ url_for('features') }}" class="dropbtn">Features</a>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('career_quiz') }}">Career Quiz</a>
+                        <a href="{{ url_for('rmaker') }}">Resume Maker</a>
+                        <a href="{{ url_for('rgrader') }}">Resume Grader</a>
+                        <a href="{{ url_for('mock') }}">Mock Interview Bot</a>
+                    </div>
+                </div>
+                <a href="{{ url_for('about') }}">About</a>
+                <a href="{{ url_for('contact') }}">Contact</a>
+                <a href="{{ url_for('settings') }}">Settings</a>
+                <a href="{{ url_for('logout') }}" id="logout-btn">Logout</a>
+            </nav>
+        </header>
+
+        <!-- Setup Section -->
+        <section class="setup-section" id="setupSection">
+            <div class="hero-content">
+                <h1 class="main-title">🎯 AI Mock Interview Bot</h1>
+                <p class="hero-subtitle">Practice with our AI interviewer and receive personalized feedback to ace your next interview!</p>
+            </div>
+
+            <div class="interview-setup-container">
+                <div class="setup-card animated-card">
+                    <h2 class="section-title">📋 Interview Setup</h2>
+                    
+                    <form class="setup-form" id="interviewSetupForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="jobTitle">Job Title/Position</label>
+                                <input type="text" id="jobTitle" name="jobTitle" placeholder="e.g., Software Engineer, Marketing Manager" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="company">Company (Optional)</label>
+                                <input type="text" id="company" name="company" placeholder="e.g., Microsoft, Google, Amazon">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="experienceLevel">Experience Level</label>
+                                <select id="experienceLevel" name="experienceLevel" required>
+                                    <option value="">Select your level</option>
+                                    <option value="entry">Entry Level (0-2 years)</option>
+                                    <option value="mid">Mid Level (3-5 years)</option>
+                                    <option value="senior">Senior Level (6+ years)</option>
+                                    <option value="executive">Executive Level</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="interviewType">Interview Type</label>
+                                <select id="interviewType" name="interviewType" required>
+                                    <option value="">Select interview type</option>
+                                    <option value="behavioral">Behavioral Interview</option>
+                                    <option value="technical">Technical Interview</option>
+                                    <option value="general">General Interview</option>
+                                    <option value="situational">Situational Interview</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="industry">Industry</label>
+                            <input type="text" id="industry" name="industry" placeholder="e.g., Technology, Healthcare, Finance">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="focusAreas">Key Focus Areas (Optional)</label>
+                            <textarea id="focusAreas" name="focusAreas" placeholder="Specific skills or topics you want to focus on..." rows="3"></textarea>
+                        </div>
+
+                        <button type="button" class="cta-button" onclick="startInterview()">
+                            🚀 Start Mock Interview
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interview Section -->
+        <section class="interview-section" id="interviewSection" style="display: none;">
+            <div class="interview-header">
+                <div class="interview-info">
+                    <h2>🤖 AI Interviewer</h2>
+                    <div class="interview-details">
+                        <span id="currentJobTitle"></span> • <span id="currentCompany"></span>
+                    </div>
+                </div>
+                <div class="interview-controls">
+                    <button class="end-btn" onclick="endInterview()">🔚 End Interview</button>
+                </div>
+            </div>
+
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Messages will be dynamically added here -->
+                </div>
+                
+                <div class="chat-input-area">
+                    <textarea id="userResponse" placeholder="Type your response here..." rows="3"></textarea>
+                    <div class="input-actions">
+                        <button class="send-btn" onclick="sendResponse()">📤 Send Response</button>
+                        <button class="voice-btn" onclick="toggleVoiceInput()">🎤 Voice Input</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-info">
+                    <span>Question <span id="currentQuestion">1</span> of <span id="totalQuestions">10</span></span>
+                    <span id="timeElapsed">Time: 00:00</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section class="results-section" id="resultsSection" style="display: none;">
+            <div class="hero-content">
+                <h1 class="main-title">📊 Interview Performance Report</h1>
+                <p class="hero-subtitle">Here's your detailed feedback and areas for improvement</p>
+            </div>
+
+            <div class="performance-grid">
+                <div class="score-overview">
+                    <div class="overall-score animated-card">
+                        <span class="score-number" id="overallScore">85</span>
+                        <span class="score-label">Overall Score</span>
+                    </div>
+                </div>
+
+                <div class="score-breakdown animated-card">
+                    <h3>Performance Breakdown</h3>
+                    <div class="score-items">
+                        <div class="score-item">
+                            <span class="score-category">Communication</span>
+                            <div class="score-bar">
+                                <div class="score-fill" style="width: 80%"></div>
+                            </div>
+                            <span class="score-value">80%</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-category">Technical Knowledge</span>
+                            <div class="score-bar">
+                                <div class="score-fill" style="width: 90%"></div>
+                            </div>
+                            <span class="score-value">90%</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-category">Problem Solving</span>
+                            <div class="score-bar">
+                                <div class="score-fill" style="width: 85%"></div>
+                            </div>
+                            <span class="score-value">85%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feedback-grid">
+                <div class="feedback-card strengths animated-card">
+                    <h3>✅ Strengths</h3>
+                    <div id="strengthsFeedback">
+                        <ul>
+                            <li>Clear and articulate communication</li>
+                            <li>Strong technical knowledge demonstration</li>
+                            <li>Good use of specific examples</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="feedback-card improvements animated-card">
+                    <h3>🎯 Areas for Improvement</h3>
+                    <div id="improvementFeedback">
+                        <ul>
+                            <li>Provide more quantified achievements</li>
+                            <li>Structure responses using STAR method</li>
+                            <li>Ask more insightful questions</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="feedback-card recommendations animated-card">
+                    <h3>💡 Recommendations</h3>
+                    <div id="recommendationsFeedback">
+                        <ul>
+                            <li>Practice behavioral questions with specific metrics</li>
+                            <li>Research the company's recent projects</li>
+                            <li>Prepare thoughtful questions about the role</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="cta-button" onclick="startNewInterview()">🔄 Start New Interview</button>
+                <button class="secondary-button" onclick="downloadReport()">📥 Download Report</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Loading Animation -->
+    <div class="loading-overlay" id="loading" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>AI is thinking...</p>
+    </div>
+
+    <script>
+        // Interview state variables
+        let currentQuestionNumber = 1;
+        let totalQuestions = 10;
+        let startTime = null;
+        let timerInterval = null;
+        let interviewData = {};
+        let conversationHistory = [];
+
+        // Start Interview Function
+        function startInterview() {
+            // Validate form
+            const jobTitle = document.getElementById('jobTitle').value;
+            const experienceLevel = document.getElementById('experienceLevel').value;
+            const interviewType = document.getElementById('interviewType').value;
+
+            if (!jobTitle || !experienceLevel || !interviewType) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Store interview data
+            interviewData = {
+                jobTitle: jobTitle,
+                company: document.getElementById('company').value,
+                experienceLevel: experienceLevel,
+                interviewType: interviewType,
+                industry: document.getElementById('industry').value,
+                focusAreas: document.getElementById('focusAreas').value
+            };
+
+            // Update UI
+            document.getElementById('currentJobTitle').textContent = jobTitle;
+            document.getElementById('currentCompany').textContent = interviewData.company || 'General Interview';
+            
+            // Switch sections with animation
+            document.getElementById('setupSection').style.display = 'none';
+            document.getElementById('interviewSection').style.display = 'block';
+
+            // Start timer
+            startTime = new Date();
+            startTimer();
+
+            // Generate first question
+            generateFirstQuestion();
+        }
+
+        // Timer functionality
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                const elapsed = new Date() - startTime;
+                const minutes = Math.floor(elapsed / 60000);
+                const seconds = Math.floor((elapsed % 60000) / 1000);
+                document.getElementById('timeElapsed').textContent = 
+                    `Time: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // Generate first question
+        function generateFirstQuestion() {
+            const welcomeMessage = {
+                type: 'ai',
+                content: `Hello! I'm your AI interviewer. I'm excited to conduct this ${interviewData.interviewType} interview for the ${interviewData.jobTitle} position. Let's begin with a simple question: Can you tell me a bit about yourself and why you're interested in this role?`,
+                timestamp: new Date()
+            };
+            
+            addMessageToChat(welcomeMessage);
+        }
+
+        // Add message to chat
+        function addMessageToChat(message) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${message.type}-message`;
+            
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <p>${message.content}</p>
+                    <span class="timestamp">${message.timestamp.toLocaleTimeString()}</span>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Send user response
+        function sendResponse() {
+            const responseText = document.getElementById('userResponse').value.trim();
+            if (!responseText) return;
+
+            // Add user message to chat
+            const userMessage = {
+                type: 'user',
+                content: responseText,
+                timestamp: new Date()
+            };
+            addMessageToChat(userMessage);
+            conversationHistory.push(userMessage);
+
+            // Clear input
+            document.getElementById('userResponse').value = '';
+
+            // Show loading
+            document.getElementById('loading').style.display = 'flex';
+
+            // Simulate AI response (replace with actual API call)
+            setTimeout(() => {
+                generateAIResponse(responseText);
+                document.getElementById('loading').style.display = 'none';
+            }, 2000);
+        }
+
+        // Generate AI response (placeholder)
+        function generateAIResponse(userResponse) {
+            const responses = [
+                "That's a great response! Let me ask you a follow-up: Can you describe a challenging project you worked on and how you overcame the obstacles?",
+                "Excellent! Now, tell me about a time when you had to work with a difficult team member. How did you handle the situation?",
+                "Very good. What do you consider to be your greatest professional achievement so far?",
+                "Interesting. How do you stay updated with the latest trends in your industry?",
+                "Perfect. Describe a situation where you had to make a difficult decision with limited information.",
+                "Great insight! What motivates you to perform your best work?",
+                "That's valuable experience. How do you handle pressure and tight deadlines?",
+                "Excellent example. What questions do you have about our company or this role?"
+            ];
+            
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            
+            const aiMessage = {
+                type: 'ai',
+                content: randomResponse,
+                timestamp: new Date()
+            };
+            
+            addMessageToChat(aiMessage);
+            conversationHistory.push(aiMessage);
+            
+            // Update progress
+            currentQuestionNumber++;
+            updateProgress();
+        }
+
+        // Update progress
+        function updateProgress() {
+            document.getElementById('currentQuestion').textContent = currentQuestionNumber;
+            const progressPercent = (currentQuestionNumber / totalQuestions) * 100;
+            document.getElementById('progressFill').style.width = `${progressPercent}%`;
+
+            // End interview if we've reached the limit
+            if (currentQuestionNumber > totalQuestions) {
+                setTimeout(endInterview, 1500);
+            }
+        }
+
+        // End interview
+        function endInterview() {
+            clearInterval(timerInterval);
+            
+            // Switch to results section with animation
+            document.getElementById('interviewSection').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'block';
+            
+            // Generate results (placeholder)
+            generateResults();
+        }
+
+        // Generate results (placeholder)
+        function generateResults() {
+            // Animate score counting
+            animateScore();
+            console.log('Generating results from conversation:', conversationHistory);
+        }
+
+        // Animate score counting
+        function animateScore() {
+            const scoreElement = document.getElementById('overallScore');
+            let currentScore = 0;
+            const targetScore = 85;
+            const increment = targetScore / 50;
+            
+            const counter = setInterval(() => {
+                currentScore += increment;
+                if (currentScore >= targetScore) {
+                    currentScore = targetScore;
+                    clearInterval(counter);
+                }
+                scoreElement.textContent = Math.floor(currentScore);
+            }, 30);
+        }
+
+        // Start new interview
+        function startNewInterview() {
+            // Reset everything
+            currentQuestionNumber = 1;
+            conversationHistory = [];
+            document.getElementById('chatMessages').innerHTML = '';
+            document.getElementById('userResponse').value = '';
+            document.getElementById('interviewSetupForm').reset();
+            
+            // Show setup section
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('setupSection').style.display = 'block';
+        }
+
+        // Download report (placeholder)
+        function downloadReport() {
+            alert('Report download functionality coming soon!');
+        }
+
+        // Voice input toggle (placeholder)
+        function toggleVoiceInput() {
+            alert('Voice input functionality coming soon!');
+        }
+
+        // Enter key to send response
+        document.getElementById('userResponse').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendResponse();
+            }
+        });
+
+        // Add scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe animated cards when they come into view
+        document.addEventListener('DOMContentLoaded', () => {
+            const animatedCards = document.querySelectorAll('.animated-card');
+            animatedCards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'all 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>
