@@ -100,9 +100,26 @@
 
         <!-- Interview Section -->
         <section class="interview-section" id="interviewSection" style="display: none;">
+            <!-- AI Avatar Section -->
+            <div class="avatar-section">
+                <div class="avatar-container">
+                    <img src="/static/images/MockAvatar.png" alt="AI Interviewer" class="mock-avatar" id="mockAvatar">
+                    <div class="speech-bubble" id="speechBubble" style="display: none;">
+                        <div class="speech-content" id="speechContent">
+                            Welcome to your interview!
+                        </div>
+                        <div class="speech-pointer"></div>
+                    </div>
+                    <div class="avatar-status" id="avatarStatus">
+                        <span class="status-dot"></span>
+                        <span class="status-text">AI Interviewer Ready</span>
+                    </div>
+                </div>
+            </div>
+
             <div class="interview-header">
                 <div class="interview-info">
-                    <h2>🤖 AI Interviewer</h2>
+                    <h2>🤖 Catalyst - Your AI Interviewer</h2>
                     <div class="interview-details">
                         <span id="currentJobTitle"></span> • <span id="currentCompany"></span>
                     </div>
@@ -120,7 +137,7 @@
                 <div class="chat-input-area">
                     <textarea id="userResponse" placeholder="Type your response here..." rows="3"></textarea>
                     <div class="input-actions">
-                        <button class="send-btn" onclick="sendResponse()">📤 Send Response</button>
+                        <button class="send-btn" onclick="sendResponse()" id="sendBtn">📤 Send Response</button>
                         <button class="voice-btn" onclick="toggleVoiceInput()">🎤 Voice Input</button>
                     </div>
                 </div>
@@ -128,7 +145,7 @@
 
             <div class="progress-container">
                 <div class="progress-info">
-                    <span>Question <span id="currentQuestion">1</span> of <span id="totalQuestions">10</span></span>
+                    <span>Question <span id="currentQuestion">1</span> of <span id="totalQuestions">8</span></span>
                     <span id="timeElapsed">Time: 00:00</span>
                 </div>
                 <div class="progress-bar">
@@ -158,16 +175,16 @@
                         <div class="score-item">
                             <span class="score-category">Communication</span>
                             <div class="score-bar">
-                                <div class="score-fill" style="width: 80%"></div>
+                                <div class="score-fill" style="width: 88%"></div>
                             </div>
-                            <span class="score-value">80%</span>
+                            <span class="score-value">88%</span>
                         </div>
                         <div class="score-item">
                             <span class="score-category">Technical Knowledge</span>
                             <div class="score-bar">
-                                <div class="score-fill" style="width: 90%"></div>
+                                <div class="score-fill" style="width: 82%"></div>
                             </div>
-                            <span class="score-value">90%</span>
+                            <span class="score-value">82%</span>
                         </div>
                         <div class="score-item">
                             <span class="score-category">Problem Solving</span>
@@ -175,6 +192,13 @@
                                 <div class="score-fill" style="width: 85%"></div>
                             </div>
                             <span class="score-value">85%</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-category">Cultural Fit</span>
+                            <div class="score-bar">
+                                <div class="score-fill" style="width: 90%"></div>
+                            </div>
+                            <span class="score-value">90%</span>
                         </div>
                     </div>
                 </div>
@@ -185,9 +209,10 @@
                     <h3>✅ Strengths</h3>
                     <div id="strengthsFeedback">
                         <ul>
-                            <li>Clear and articulate communication</li>
-                            <li>Strong technical knowledge demonstration</li>
-                            <li>Good use of specific examples</li>
+                            <li>Excellent communication skills and clear articulation</li>
+                            <li>Strong demonstration of relevant experience</li>
+                            <li>Good use of specific examples and metrics</li>
+                            <li>Showed enthusiasm and genuine interest in the role</li>
                         </ul>
                     </div>
                 </div>
@@ -196,9 +221,10 @@
                     <h3>🎯 Areas for Improvement</h3>
                     <div id="improvementFeedback">
                         <ul>
-                            <li>Provide more quantified achievements</li>
-                            <li>Structure responses using STAR method</li>
-                            <li>Ask more insightful questions</li>
+                            <li>Could provide more detailed technical explanations</li>
+                            <li>Practice using the STAR method for behavioral questions</li>
+                            <li>Prepare more insightful questions about company culture</li>
+                            <li>Work on maintaining eye contact during responses</li>
                         </ul>
                     </div>
                 </div>
@@ -207,9 +233,10 @@
                     <h3>💡 Recommendations</h3>
                     <div id="recommendationsFeedback">
                         <ul>
-                            <li>Practice behavioral questions with specific metrics</li>
-                            <li>Research the company's recent projects</li>
-                            <li>Prepare thoughtful questions about the role</li>
+                            <li>Research the company's recent projects and initiatives</li>
+                            <li>Practice mock interviews focusing on behavioral questions</li>
+                            <li>Prepare questions that demonstrate deep interest in the role</li>
+                            <li>Consider taking courses to strengthen technical knowledge</li>
                         </ul>
                     </div>
                 </div>
@@ -229,9 +256,45 @@
     </div>
 
     <script>
+        // Hard-coded interview questions for demo
+        const interviewQuestions = [
+    {
+        question: "Hello! I'm your AI interviewer from Amazon. I'm excited to discuss your interest in our Financial Analyst position today. To start, can you tell me about yourself, your educational background, and what specifically draws you to financial analysis at Amazon?",
+        type: "introduction"
+    },
+    {
+        question: "Great background! As you know, Amazon operates in a fast-paced, data-driven environment. Can you walk me through your experience with financial modeling, Excel, or any analytical tools you've used during your studies or internships?",
+        type: "technical"
+    },
+    {
+        question: "Excellent! Let's dive into a practical scenario. Imagine you're analyzing Amazon's quarterly revenue and notice an unexpected 15% decline in one product category. How would you approach investigating this variance and what factors would you consider?",
+        type: "analytical"
+    },
+    {
+        question: "Very good approach! Amazon values customer obsession highly. Can you describe a time when you had to analyze data or solve a problem while keeping the end user or customer in mind? This could be from a class project, internship, or even a personal experience.",
+        type: "behavioral"
+    },
+    {
+        question: "That's a great example! As a Financial Analyst at Amazon, you'd often need to present findings to senior leadership. Tell me about a time when you had to explain complex data or financial concepts to someone without a finance background. How did you make it understandable?",
+        type: "communication"
+    },
+    {
+        question: "Impressive communication skills! Amazon moves quickly and priorities can shift rapidly. Describe a situation where you had to work under tight deadlines or handle multiple competing priorities. How did you manage your time and ensure quality work?",
+        type: "situational"
+    },
+    {
+        question: "Perfect! At Amazon, we often deal with ambiguous situations and incomplete data. Can you give me an example of when you had to make a recommendation or decision with limited information? What was your thought process?",
+        type: "problem-solving"
+    },
+    {
+        question: "Excellent problem-solving approach! Finally, I'd love to hear your questions about Amazon's finance organization, our culture of innovation, or what you're most excited about in this Financial Analyst role. What would you like to know?",
+        type: "closing"
+    }
+];
+
         // Interview state variables
-        let currentQuestionNumber = 1;
-        let totalQuestions = 10;
+        let currentQuestionNumber = 0;
+        let totalQuestions = interviewQuestions.length;
         let startTime = null;
         let timerInterval = null;
         let interviewData = {};
@@ -262,6 +325,7 @@
             // Update UI
             document.getElementById('currentJobTitle').textContent = jobTitle;
             document.getElementById('currentCompany').textContent = interviewData.company || 'General Interview';
+            document.getElementById('totalQuestions').textContent = totalQuestions;
             
             // Switch sections with animation
             document.getElementById('setupSection').style.display = 'none';
@@ -271,8 +335,94 @@
             startTime = new Date();
             startTimer();
 
-            // Generate first question
-            generateFirstQuestion();
+            // Show first question after a brief delay
+            setTimeout(() => {
+                showNextQuestion();
+            }, 1000);
+        }
+
+        // Show next question with avatar animation
+        function showNextQuestion() {
+            if (currentQuestionNumber >= totalQuestions) {
+                setTimeout(endInterview, 2000);
+                return;
+            }
+
+            const question = interviewQuestions[currentQuestionNumber];
+            
+            // Update progress
+            updateProgress();
+            
+            // Animate avatar
+            animateAvatar();
+            
+            // Show speech bubble
+            showSpeechBubble(question.question);
+            
+            // Add AI message to chat
+            const aiMessage = {
+                type: 'ai',
+                content: question.question,
+                timestamp: new Date()
+            };
+            addMessageToChat(aiMessage);
+            conversationHistory.push(aiMessage);
+        }
+
+        // Animate avatar
+        function animateAvatar() {
+            const avatar = document.getElementById('mockAvatar');
+            const status = document.getElementById('avatarStatus');
+            
+            // Add speaking animation
+            avatar.classList.add('speaking');
+            status.querySelector('.status-text').textContent = 'AI Speaking...';
+            status.querySelector('.status-dot').style.backgroundColor = '#4CAF50';
+            
+            // Remove animation after speech bubble appears
+            setTimeout(() => {
+                avatar.classList.remove('speaking');
+                status.querySelector('.status-text').textContent = 'Listening...';
+                status.querySelector('.status-dot').style.backgroundColor = '#2196F3';
+            }, 3000);
+        }
+
+        // Show speech bubble
+        function showSpeechBubble(text) {
+            const speechBubble = document.getElementById('speechBubble');
+            const speechContent = document.getElementById('speechContent');
+            
+            // Set content and show bubble
+            speechContent.textContent = text;
+            speechBubble.style.display = 'block';
+            speechBubble.classList.add('animate-in');
+            
+            // Type out text effect
+            typeOutText(speechContent, text);
+            
+            // Hide speech bubble after 8 seconds
+            setTimeout(() => {
+                speechBubble.classList.add('animate-out');
+                setTimeout(() => {
+                    speechBubble.style.display = 'none';
+                    speechBubble.classList.remove('animate-in', 'animate-out');
+                }, 500);
+            }, 8000);
+        }
+
+        // Type out text effect
+        function typeOutText(element, text) {
+            element.textContent = '';
+            let i = 0;
+            
+            const typeInterval = setInterval(() => {
+                element.textContent += text.charAt(i);
+                i++;
+                
+                if (i > text.length) {
+                    clearInterval(typeInterval);
+                }
+            }, 30);
         }
 
         // Timer functionality
@@ -284,17 +434,6 @@
                 document.getElementById('timeElapsed').textContent = 
                     `Time: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             }, 1000);
-        }
-
-        // Generate first question
-        function generateFirstQuestion() {
-            const welcomeMessage = {
-                type: 'ai',
-                content: `Hello! I'm your AI interviewer. I'm excited to conduct this ${interviewData.interviewType} interview for the ${interviewData.jobTitle} position. Let's begin with a simple question: Can you tell me a bit about yourself and why you're interested in this role?`,
-                timestamp: new Date()
-            };
-            
-            addMessageToChat(welcomeMessage);
         }
 
         // Add message to chat
@@ -319,6 +458,11 @@
             const responseText = document.getElementById('userResponse').value.trim();
             if (!responseText) return;
 
+            // Disable send button temporarily
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.disabled = true;
+            sendBtn.textContent = 'Sending...';
+
             // Add user message to chat
             const userMessage = {
                 type: 'user',
@@ -334,71 +478,48 @@
             // Show loading
             document.getElementById('loading').style.display = 'flex';
 
-            // Simulate AI response (replace with actual API call)
+            // Move to next question after delay
             setTimeout(() => {
-                generateAIResponse(responseText);
                 document.getElementById('loading').style.display = 'none';
+                sendBtn.disabled = false;
+                sendBtn.textContent = '📤 Send Response';
+                
+                currentQuestionNumber++;
+                
+                // Show next question after brief pause
+                setTimeout(() => {
+                    showNextQuestion();
+                }, 1000);
             }, 2000);
-        }
-
-        // Generate AI response (placeholder)
-        function generateAIResponse(userResponse) {
-            const responses = [
-                "That's a great response! Let me ask you a follow-up: Can you describe a challenging project you worked on and how you overcame the obstacles?",
-                "Excellent! Now, tell me about a time when you had to work with a difficult team member. How did you handle the situation?",
-                "Very good. What do you consider to be your greatest professional achievement so far?",
-                "Interesting. How do you stay updated with the latest trends in your industry?",
-                "Perfect. Describe a situation where you had to make a difficult decision with limited information.",
-                "Great insight! What motivates you to perform your best work?",
-                "That's valuable experience. How do you handle pressure and tight deadlines?",
-                "Excellent example. What questions do you have about our company or this role?"
-            ];
-            
-            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-            
-            const aiMessage = {
-                type: 'ai',
-                content: randomResponse,
-                timestamp: new Date()
-            };
-            
-            addMessageToChat(aiMessage);
-            conversationHistory.push(aiMessage);
-            
-            // Update progress
-            currentQuestionNumber++;
-            updateProgress();
         }
 
         // Update progress
         function updateProgress() {
-            document.getElementById('currentQuestion').textContent = currentQuestionNumber;
-            const progressPercent = (currentQuestionNumber / totalQuestions) * 100;
+            document.getElementById('currentQuestion').textContent = currentQuestionNumber + 1;
+            const progressPercent = ((currentQuestionNumber + 1) / totalQuestions) * 100;
             document.getElementById('progressFill').style.width = `${progressPercent}%`;
-
-            // End interview if we've reached the limit
-            if (currentQuestionNumber > totalQuestions) {
-                setTimeout(endInterview, 1500);
-            }
         }
 
         // End interview
         function endInterview() {
             clearInterval(timerInterval);
             
-            // Switch to results section with animation
-            document.getElementById('interviewSection').style.display = 'none';
-            document.getElementById('resultsSection').style.display = 'block';
+            // Show final speech bubble
+            showSpeechBubble("Thank you for completing the interview! I'll now generate your performance report. Great job today!");
             
-            // Generate results (placeholder)
-            generateResults();
+            // Switch to results section after delay
+            setTimeout(() => {
+                document.getElementById('interviewSection').style.display = 'none';
+                document.getElementById('resultsSection').style.display = 'block';
+                generateResults();
+            }, 5000);
         }
 
-        // Generate results (placeholder)
+        // Generate results
         function generateResults() {
             // Animate score counting
             animateScore();
-            console.log('Generating results from conversation:', conversationHistory);
+            console.log('Interview completed with', conversationHistory.length, 'exchanges');
         }
 
         // Animate score counting
@@ -406,7 +527,7 @@
             const scoreElement = document.getElementById('overallScore');
             let currentScore = 0;
             const targetScore = 85;
-            const increment = targetScore / 50;
+            const increment = targetScore / 60;
             
             const counter = setInterval(() => {
                 currentScore += increment;
@@ -415,17 +536,20 @@
                     clearInterval(counter);
                 }
                 scoreElement.textContent = Math.floor(currentScore);
-            }, 30);
+            }, 50);
         }
 
         // Start new interview
         function startNewInterview() {
             // Reset everything
-            currentQuestionNumber = 1;
+            currentQuestionNumber = 0;
             conversationHistory = [];
             document.getElementById('chatMessages').innerHTML = '';
             document.getElementById('userResponse').value = '';
             document.getElementById('interviewSetupForm').reset();
+            
+            // Hide speech bubble
+            document.getElementById('speechBubble').style.display = 'none';
             
             // Show setup section
             document.getElementById('resultsSection').style.display = 'none';
@@ -434,7 +558,7 @@
 
         // Download report (placeholder)
         function downloadReport() {
-            alert('Report download functionality coming soon!');
+            alert('Generating PDF report... This feature will be available soon!');
         }
 
         // Voice input toggle (placeholder)
@@ -450,28 +574,23 @@
             }
         });
 
-        // Add scroll animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        // Observe animated cards when they come into view
+        // Add scroll animations for setup cards
         document.addEventListener('DOMContentLoaded', () => {
             const animatedCards = document.querySelectorAll('.animated-card');
             animatedCards.forEach(card => {
                 card.style.opacity = '0';
                 card.style.transform = 'translateY(30px)';
                 card.style.transition = 'all 0.6s ease';
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }
+                    });
+                });
+                
                 observer.observe(card);
             });
         });

@@ -273,3 +273,48 @@ nav a:hover {
     padding: 2rem 1rem;
   }
 }
+
+.member-photo {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center top; /* Changed from 'center' to 'center top' to crop higher */
+    transform: scale(1.7); /* Added zoom to make faces larger and better fit */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.member-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    overflow: hidden;
+    border: 4px solid #8e44ad;
+    box-shadow: 0 8px 20px rgba(142, 68, 173, 0.3);
+    transition: all 0.3s ease;
+}
+
+.member-avatar:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 12px 30px rgba(142, 68, 173, 0.4);
+}
+
+.team-member:hover .member-photo {
+    transform: scale(1.3); /* Increased hover zoom to maintain proportion */
+}
+
+/* Ensure the team member cards look good */
+.team-member {
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.team-member:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
